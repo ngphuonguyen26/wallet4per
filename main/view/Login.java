@@ -137,7 +137,9 @@ public class Login extends JFrame {
 		btRe.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btRe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// form dki
+				Regist re = new Regist();
+				re.setVisible(true);
+				dispose();
 			}
 		});
 		panel.add(btRe);

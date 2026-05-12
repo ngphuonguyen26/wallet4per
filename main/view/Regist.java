@@ -1,6 +1,6 @@
 package main.view;
-
 import java.awt.CardLayout;
+import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,16 +15,22 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.FlowLayout;
+import javax.swing.JPasswordField;
 
-public class UserInfo extends JFrame {
+public class Regist extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfID;
 	private JTextField tfUName;
-	private JTextField tdFName;
+	private JTextField tfFName;
 	private JTextField tfEmail;
-	private JPanel mainChildForm;
+	private JPanel panel;
+	private JButton btExit;
+	private JButton btRe;
+	private JLabel lbPa;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -32,8 +38,7 @@ public class UserInfo extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public UserInfo(JPanel childform) {
-		this.mainChildForm = childform;
+	public Regist() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 596, 280);
 		contentPane = new JPanel();
@@ -41,9 +46,9 @@ public class UserInfo extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 95, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 39, 40, 38, 37, 20, 51, 0, 0};
+		gbl_contentPane.rowHeights = new int[]{0, 39, 40, 38, 37, 36, 51, 0};
 		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
 		JLabel lbID = new JLabel("ID:");
@@ -89,14 +94,14 @@ public class UserInfo extends JFrame {
 		gbc_lblNewLabel_2.gridy = 3;
 		contentPane.add(lblNewLabel_2, gbc_lblNewLabel_2);
 		
-		tdFName = new JTextField();
-		GridBagConstraints gbc_tdFName = new GridBagConstraints();
-		gbc_tdFName.insets = new Insets(0, 0, 5, 0);
-		gbc_tdFName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tdFName.gridx = 3;
-		gbc_tdFName.gridy = 3;
-		contentPane.add(tdFName, gbc_tdFName);
-		tdFName.setColumns(10);
+		tfFName = new JTextField();
+		GridBagConstraints gbc_tfFName = new GridBagConstraints();
+		gbc_tfFName.insets = new Insets(0, 0, 5, 0);
+		gbc_tfFName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_tfFName.gridx = 3;
+		gbc_tfFName.gridy = 3;
+		contentPane.add(tfFName, gbc_tfFName);
+		tfFName.setColumns(10);
 		
 		JLabel lblNewLabel_3 = new JLabel("Email:");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -115,22 +120,49 @@ public class UserInfo extends JFrame {
 		contentPane.add(tfEmail, gbc_tfEmail);
 		tfEmail.setColumns(10);
 		
-		JButton btExit = new JButton("Thoát");
-		btExit.addActionListener(new ActionListener() {
+		lbPa = new JLabel("Password");
+		lbPa.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		GridBagConstraints gbc_lbPa = new GridBagConstraints();
+		gbc_lbPa.insets = new Insets(0, 0, 5, 5);
+		gbc_lbPa.gridx = 1;
+		gbc_lbPa.gridy = 5;
+		contentPane.add(lbPa, gbc_lbPa);
+		
+		passwordField = new JPasswordField();
+		GridBagConstraints gbc_passwordField = new GridBagConstraints();
+		gbc_passwordField.insets = new Insets(0, 0, 5, 0);
+		gbc_passwordField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_passwordField.gridx = 3;
+		gbc_passwordField.gridy = 5;
+		contentPane.add(passwordField, gbc_passwordField);
+		
+		panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.gridwidth = 3;
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 6;
+		contentPane.add(panel, gbc_panel);
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 5));
+		
+		btRe = new JButton("Đăng kí");
+		btRe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CardLayout cl = (CardLayout) mainChildForm.getLayout();
-				cl.previous(mainChildForm); 
-				mainChildForm.remove(contentPane);
-				mainChildForm.revalidate();
-		        mainChildForm.repaint();
 			}
 		});
-		btExit.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		GridBagConstraints gbc_btExit = new GridBagConstraints();
-		gbc_btExit.insets = new Insets(0, 0, 5, 0);
-		gbc_btExit.gridx = 3;
-		gbc_btExit.gridy = 6;
-		contentPane.add(btExit, gbc_btExit);
+		btRe.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		panel.add(btRe);
+		
+		btExit = new JButton("Thoát");
+		btExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Login log = new Login();
+				log.setVisible(true);
+				dispose();
+			}
+		});
+		btExit.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		panel.add(btExit);
 
 	}
 
