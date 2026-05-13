@@ -1,7 +1,5 @@
 package main.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,24 +11,10 @@ import javax.swing.table.DefaultTableModel;
 public class Wallet extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	
 	private JPanel contentPane;
-	private JTable table;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Wallet frame = new Wallet();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JScrollPane scrollPane_Wallet;
+	private JTable table_Wallet;
 
 	/**
 	 * Create the frame.
@@ -38,23 +22,25 @@ public class Wallet extends JFrame {
 	public Wallet() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
-		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
+
+		scrollPane_Wallet = new JScrollPane();
+		contentPane.add(scrollPane_Wallet, BorderLayout.CENTER);
+
+		table_Wallet = new JTable();
+		table_Wallet.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"ID", "T\u00EAn v\u00ED", "S\u1ED1 d\u01B0"
+				"ID", "Tên ví", "Số dư"
 			}
 		));
-		scrollPane.setViewportView(table);
+
+		scrollPane_Wallet.setViewportView(table_Wallet);
 	}
 
 }

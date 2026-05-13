@@ -19,97 +19,114 @@ import java.awt.Font;
 public class Login extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField tfID;
-	private JPasswordField tfPass;
-	private JPanel panel;
-	private JButton btLg;
-	private JButton btRe;
-	private JCheckBox cbPass;
-	/**
-	 * Launch the application.
-	 */
 
-	/**
-	 * Create the frame.
-	 */
+	private JPanel contentPane;
+	private JTextField textField_Username;
+	private JPasswordField passwordField_Password;
+	private JPanel panel;
+	private JButton button_Login;
+	private JButton button_Register;
+	private JCheckBox checkBox_ShowPassword;
+
 	public Login() {
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(200, 200, 551, 276);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{35, 0, 0, 47, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{35, 14, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, Double.MIN_VALUE, 0.0, 0.0};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+		gbl_contentPane.columnWidths = new int[] {35, 0, 0, 47, 0, 0, 0, 0, 0, 0};
+		gbl_contentPane.rowHeights = new int[] {35, 14, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[] {
+				0.0, 0.0, 0.0, 1.0, 0.0,
+				1.0, 0.0, Double.MIN_VALUE, 0.0, 0.0
+		};
+		gbl_contentPane.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0};
+
 		contentPane.setLayout(gbl_contentPane);
 
+		// Username
 		JLabel laUsername = new JLabel("Tên đăng nhập:");
 		laUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
 		GridBagConstraints gbc_laUsername = new GridBagConstraints();
 		gbc_laUsername.gridwidth = 2;
 		gbc_laUsername.ipady = 30;
 		gbc_laUsername.insets = new Insets(0, 0, 5, 5);
 		gbc_laUsername.gridx = 0;
 		gbc_laUsername.gridy = 1;
+
 		contentPane.add(laUsername, gbc_laUsername);
 
-		tfID = new JTextField();
-		GridBagConstraints gbc_tfID = new GridBagConstraints();
-		gbc_tfID.gridwidth = 5;
-		gbc_tfID.insets = new Insets(0, 0, 5, 5);
-		gbc_tfID.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tfID.gridx = 3;
-		gbc_tfID.gridy = 1;
-		contentPane.add(tfID, gbc_tfID);
-		tfID.setColumns(10);
+		textField_Username = new JTextField();
 
+		GridBagConstraints gbc_textField_Username = new GridBagConstraints();
+		gbc_textField_Username.gridwidth = 5;
+		gbc_textField_Username.insets = new Insets(0, 0, 5, 5);
+		gbc_textField_Username.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_Username.gridx = 3;
+		gbc_textField_Username.gridy = 1;
+
+		contentPane.add(textField_Username, gbc_textField_Username);
+
+		textField_Username.setColumns(10);
+
+		// Password
 		JLabel laPa = new JLabel("Mật khẩu:");
 		laPa.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
 		GridBagConstraints gbc_laPa = new GridBagConstraints();
 		gbc_laPa.gridwidth = 2;
 		gbc_laPa.ipady = 30;
 		gbc_laPa.insets = new Insets(0, 0, 5, 5);
 		gbc_laPa.gridx = 0;
 		gbc_laPa.gridy = 2;
+
 		contentPane.add(laPa, gbc_laPa);
 
-		tfPass = new JPasswordField();
-		GridBagConstraints gbc_tpPass = new GridBagConstraints();
-		gbc_tpPass.gridwidth = 5;
-		gbc_tpPass.insets = new Insets(0, 0, 5, 5);
-		gbc_tpPass.fill = GridBagConstraints.HORIZONTAL;
-		gbc_tpPass.gridx = 3;
-		gbc_tpPass.gridy = 2;
-		contentPane.add(tfPass, gbc_tpPass);
-		tfPass.setColumns(10);
+		passwordField_Password = new JPasswordField();
 
-		cbPass = new JCheckBox("Hiện mật khẩu");
-		cbPass.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		GridBagConstraints gbc_cbPass = new GridBagConstraints();
-		gbc_cbPass.gridwidth = 2;
-		gbc_cbPass.insets = new Insets(0, 0, 5, 0);
-		gbc_cbPass.gridx = 8;
-		gbc_cbPass.gridy = 2;
-		contentPane.add(cbPass, gbc_cbPass);
-        cbPass.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                if(cbPass.isSelected())
-                {
-                    tfPass.setEchoChar((char) 0);
-                }
-                else
-                {
-                    tfPass.setEchoChar('*');
-                }
-            }
-        });
+		GridBagConstraints gbc_passwordField_Password = new GridBagConstraints();
+		gbc_passwordField_Password.gridwidth = 5;
+		gbc_passwordField_Password.insets = new Insets(0, 0, 5, 5);
+		gbc_passwordField_Password.fill = GridBagConstraints.HORIZONTAL;
+		gbc_passwordField_Password.gridx = 3;
+		gbc_passwordField_Password.gridy = 2;
 
+		contentPane.add(passwordField_Password, gbc_passwordField_Password);
 
+		passwordField_Password.setColumns(10);
+
+		// Show Password
+		checkBox_ShowPassword = new JCheckBox("Hiện mật khẩu");
+		checkBox_ShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 12));
+
+		GridBagConstraints gbc_checkBox_ShowPassword = new GridBagConstraints();
+		gbc_checkBox_ShowPassword.gridwidth = 2;
+		gbc_checkBox_ShowPassword.insets = new Insets(0, 0, 5, 0);
+		gbc_checkBox_ShowPassword.gridx = 8;
+		gbc_checkBox_ShowPassword.gridy = 2;
+
+		contentPane.add(checkBox_ShowPassword, gbc_checkBox_ShowPassword);
+
+		checkBox_ShowPassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (checkBox_ShowPassword.isSelected()) {
+					passwordField_Password.setEchoChar((char) 0);
+				} 
+				else {
+					passwordField_Password.setEchoChar('*');
+				}
+			}
+		});
+
+		// Button Panel
 		panel = new JPanel();
+
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.weighty = 1.0;
 		gbc_panel.ipady = 30;
@@ -118,32 +135,42 @@ public class Login extends JFrame {
 		gbc_panel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 4;
+
 		contentPane.add(panel, gbc_panel);
+
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
 
-		btLg = new JButton("Đăng nhập");
-		btLg.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btLg.addActionListener(new ActionListener() {
+		// Login Button
+		button_Login = new JButton("Đăng nhập");
+		button_Login.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		button_Login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Them dkien kiem tra logic vao
+
+				// Thêm điều kiện kiểm tra logic ở đây
 				UserGeneral formUser = new UserGeneral();
 				formUser.setVisible(true);
+
 				dispose();
 			}
 		});
-		panel.add(btLg);
 
-		btRe = new JButton("Đăng kí");
-		btRe.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btRe.addActionListener(new ActionListener() {
+		panel.add(button_Login);
+
+		// Register Button
+		button_Register = new JButton("Đăng kí");
+		button_Register.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		button_Register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				Regist re = new Regist();
 				re.setVisible(true);
+
 				dispose();
 			}
 		});
-		panel.add(btRe);
 
+		panel.add(button_Register);
 	}
-
 }
