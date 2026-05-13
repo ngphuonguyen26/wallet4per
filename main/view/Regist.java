@@ -15,9 +15,6 @@ import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import java.awt.Font;
 
 public class Regist extends JFrame {
@@ -63,7 +60,6 @@ public class Regist extends JFrame {
 
 		contentPane.setLayout(gbl_contentPane);
 
-		// Username
 		JLabel label_Username = new JLabel("Username:");
 		label_Username.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -86,7 +82,6 @@ public class Regist extends JFrame {
 
 		textField_Username.setColumns(10);
 
-		// Full Name
 		label_FullName = new JLabel("Tên:");
 		label_FullName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -109,7 +104,6 @@ public class Regist extends JFrame {
 
 		textField_FullName.setColumns(10);
 
-		// Email
 		label_Email = new JLabel("Email:");
 		label_Email.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -132,7 +126,6 @@ public class Regist extends JFrame {
 
 		textField_Email.setColumns(10);
 
-		// Password
 		label_Password = new JLabel("Password:");
 		label_Password.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -153,7 +146,6 @@ public class Regist extends JFrame {
 
 		contentPane.add(passwordField_Password, gbc_passwordField_Password);
 
-		// Button Panel
 		panel = new JPanel();
 
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -166,35 +158,36 @@ public class Regist extends JFrame {
 
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 5));
 
-		// Register Button
 		button_Register = new JButton("Đăng kí");
-
-		button_Register.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// xử lý đăng ký
-			}
-		});
-
 		button_Register.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
 		panel.add(button_Register);
 
-		// Exit Button
 		button_Exit = new JButton("Thoát");
-
-		button_Exit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				Login log = new Login();
-
-				log.setVisible(true);
-
-				dispose();
-			}
-		});
-
 		button_Exit.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
 		panel.add(button_Exit);
+	}
+
+	public String getUsername() {
+		return textField_Username.getText();
+	}
+
+	public String getFullName() {
+		return textField_FullName.getText();
+	}
+
+	public String getEmail() {
+		return textField_Email.getText();
+	}
+
+	public String getPassword() {
+		return String.valueOf(passwordField_Password.getPassword());
+	}
+
+	public JButton getButton_Register() {
+		return button_Register;
+	}
+
+	public JButton getButton_Exit() {
+		return button_Exit;
 	}
 }

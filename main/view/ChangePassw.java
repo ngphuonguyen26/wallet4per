@@ -1,7 +1,5 @@
 package main.view;
 
-import java.awt.CardLayout;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,8 +11,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class ChangePassw extends JFrame {
 
@@ -47,7 +43,6 @@ public class ChangePassw extends JFrame {
 
 		contentPane.setLayout(gbl_contentPane);
 
-		// Old Password
 		JLabel lbOldPass = new JLabel("Mật khẩu cũ:");
 		lbOldPass.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
@@ -70,7 +65,6 @@ public class ChangePassw extends JFrame {
 
 		contentPane.add(PasswordField_OldPassword, gbc_PasswordField_OldPassword);
 
-		// New Password
 		JLabel lbNewPass = new JLabel("Mật khẩu mới:");
 		lbNewPass.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
@@ -92,7 +86,6 @@ public class ChangePassw extends JFrame {
 
 		contentPane.add(PasswordField_NewPassword, gbc_PasswordField_NewPassword);
 
-		// Button Panel
 		panel = new JPanel();
 
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -105,36 +98,36 @@ public class ChangePassw extends JFrame {
 
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
 
-		// Confirm Button
 		button_Confirm = new JButton("Lưu");
-
-		button_Confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// xử lý lưu
-			}
-		});
-
 		button_Confirm.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		panel.add(button_Confirm);
 
-		// Exit Button
 		button_Exit = new JButton("Thoát");
-
-		button_Exit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				CardLayout cl = (CardLayout) mainChildForm.getLayout();
-
-				cl.previous(mainChildForm);
-
-				mainChildForm.remove(contentPane);
-
-				mainChildForm.revalidate();
-				mainChildForm.repaint();
-			}
-		});
-
 		button_Exit.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		panel.add(button_Exit);
+	}
+
+	public String getOldPassword() {
+		return String.valueOf(PasswordField_OldPassword.getPassword());
+	}
+
+	public String getNewPassword() {
+		return String.valueOf(PasswordField_NewPassword.getPassword());
+	}
+
+	public JButton getButton_Confirm() {
+		return button_Confirm;
+	}
+
+	public JButton getButton_Exit() {
+		return button_Exit;
+	}
+
+	public JPanel getMainChildForm() {
+		return mainChildForm;
+	}
+
+	public JPanel getContentPanePanel() {
+		return contentPane;
 	}
 }

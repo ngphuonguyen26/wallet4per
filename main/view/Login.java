@@ -11,8 +11,6 @@ import java.awt.Insets;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import java.awt.Font;
 
@@ -29,7 +27,6 @@ public class Login extends JFrame {
 	private JCheckBox checkBox_ShowPassword;
 
 	public Login() {
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(200, 200, 551, 276);
 
@@ -48,7 +45,6 @@ public class Login extends JFrame {
 
 		contentPane.setLayout(gbl_contentPane);
 
-		// Username
 		JLabel laUsername = new JLabel("Tên đăng nhập:");
 		laUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -71,10 +67,8 @@ public class Login extends JFrame {
 		gbc_textField_Username.gridy = 1;
 
 		contentPane.add(textField_Username, gbc_textField_Username);
-
 		textField_Username.setColumns(10);
 
-		// Password
 		JLabel laPa = new JLabel("Mật khẩu:");
 		laPa.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
@@ -97,10 +91,8 @@ public class Login extends JFrame {
 		gbc_passwordField_Password.gridy = 2;
 
 		contentPane.add(passwordField_Password, gbc_passwordField_Password);
-
 		passwordField_Password.setColumns(10);
 
-		// Show Password
 		checkBox_ShowPassword = new JCheckBox("Hiện mật khẩu");
 		checkBox_ShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
@@ -112,19 +104,6 @@ public class Login extends JFrame {
 
 		contentPane.add(checkBox_ShowPassword, gbc_checkBox_ShowPassword);
 
-		checkBox_ShowPassword.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if (checkBox_ShowPassword.isSelected()) {
-					passwordField_Password.setEchoChar((char) 0);
-				} 
-				else {
-					passwordField_Password.setEchoChar('*');
-				}
-			}
-		});
-
-		// Button Panel
 		panel = new JPanel();
 
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -140,37 +119,36 @@ public class Login extends JFrame {
 
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
 
-		// Login Button
 		button_Login = new JButton("Đăng nhập");
 		button_Login.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		button_Login.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				// Thêm điều kiện kiểm tra logic ở đây
-				UserGeneral formUser = new UserGeneral();
-				formUser.setVisible(true);
-
-				dispose();
-			}
-		});
-
 		panel.add(button_Login);
 
-		// Register Button
 		button_Register = new JButton("Đăng kí");
 		button_Register.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		button_Register.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				Regist re = new Regist();
-				re.setVisible(true);
-
-				dispose();
-			}
-		});
-
 		panel.add(button_Register);
+	}
+
+	public String getUsername() {
+		return String.valueOf(textField_Username.getText());
+	}
+
+	public String getPassword() {
+		return String.valueOf(passwordField_Password.getPassword());
+	}
+
+	public JButton getButton_Login() {
+		return button_Login;
+	}
+
+	public JButton getButton_Register() {
+		return button_Register;
+	}
+
+	public JCheckBox getCheckBox_ShowPassword() {
+		return checkBox_ShowPassword;
+	}
+
+	public JPasswordField getPasswordField_Password() {
+		return passwordField_Password;
 	}
 }

@@ -15,7 +15,7 @@ public class UserDAO {
     }
 
     public boolean register(User user) {
-        String sql = "INSERT INTO users (username, password, full_name, email) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, fullname, email) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword()); // nên hash trước khi truyền vào
@@ -70,7 +70,7 @@ public class UserDAO {
     }
 
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET full_name = ?, email = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET fullname = ?, email = ? WHERE user_id = ?";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getEmail());
@@ -92,13 +92,34 @@ public class UserDAO {
             return false;
         }
     }
+    public boolean deleteUser(int userId) {
+
+        String sql = "DELETE FROM users WHERE user_id = ?";
+
+        try (PreparedStatement ps =
+                     getConn().prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO] deleteUser: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
     // Helper: map ResultSet -> User
     private User mapResultSet(ResultSet rs) throws SQLException {
         User u = new User();
         u.setId(rs.getInt("user_id"));
         u.setUsername(rs.getString("username"));
         u.setPassword(rs.getString("password"));
-        u.setFullName(rs.getString("full_name"));
+        u.setFullName(rs.getString("fullname"));
         u.setEmail(rs.getString("email"));
         return u;
     }

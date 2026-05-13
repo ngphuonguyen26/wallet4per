@@ -1,4 +1,5 @@
 package main;
+import main.control.LoginController;
 import main.view.*;
 public class Main {
 	public static void main(String args[])
@@ -6,8 +7,9 @@ public class Main {
 		java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Login log = new Login();
-                    log.setVisible(true);
+                     Login view = new Login();
+                     LoginController login = new LoginController(view);
+                     view.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
