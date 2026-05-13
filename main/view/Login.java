@@ -21,7 +21,7 @@ public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfID;
-	private JPasswordField tpPass;
+	private JPasswordField tfPass;
 	private JPanel panel;
 	private JButton btLg;
 	private JButton btRe;
@@ -45,7 +45,7 @@ public class Login extends JFrame {
 		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, Double.MIN_VALUE, 0.0, 0.0};
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
 		contentPane.setLayout(gbl_contentPane);
-		
+
 		JLabel laUsername = new JLabel("Tên đăng nhập:");
 		laUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		GridBagConstraints gbc_laUsername = new GridBagConstraints();
@@ -55,7 +55,7 @@ public class Login extends JFrame {
 		gbc_laUsername.gridx = 0;
 		gbc_laUsername.gridy = 1;
 		contentPane.add(laUsername, gbc_laUsername);
-		
+
 		tfID = new JTextField();
 		GridBagConstraints gbc_tfID = new GridBagConstraints();
 		gbc_tfID.gridwidth = 5;
@@ -65,7 +65,7 @@ public class Login extends JFrame {
 		gbc_tfID.gridy = 1;
 		contentPane.add(tfID, gbc_tfID);
 		tfID.setColumns(10);
-		
+
 		JLabel laPa = new JLabel("Mật khẩu:");
 		laPa.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		GridBagConstraints gbc_laPa = new GridBagConstraints();
@@ -75,17 +75,17 @@ public class Login extends JFrame {
 		gbc_laPa.gridx = 0;
 		gbc_laPa.gridy = 2;
 		contentPane.add(laPa, gbc_laPa);
-		
-		tpPass = new JPasswordField();
+
+		tfPass = new JPasswordField();
 		GridBagConstraints gbc_tpPass = new GridBagConstraints();
 		gbc_tpPass.gridwidth = 5;
 		gbc_tpPass.insets = new Insets(0, 0, 5, 5);
 		gbc_tpPass.fill = GridBagConstraints.HORIZONTAL;
 		gbc_tpPass.gridx = 3;
 		gbc_tpPass.gridy = 2;
-		contentPane.add(tpPass, gbc_tpPass);
-		tpPass.setColumns(10);
-		
+		contentPane.add(tfPass, gbc_tpPass);
+		tfPass.setColumns(10);
+
 		cbPass = new JCheckBox("Hiện mật khẩu");
 		cbPass.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		GridBagConstraints gbc_cbPass = new GridBagConstraints();
@@ -99,15 +99,15 @@ public class Login extends JFrame {
             {
                 if(cbPass.isSelected())
                 {
-                    tpPass.setEchoChar((char) 0);
+                    tfPass.setEchoChar((char) 0);
                 }
                 else
                 {
-                    tpPass.setEchoChar('*');
+                    tfPass.setEchoChar('*');
                 }
             }
         });
-		
+
 
 		panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -120,7 +120,7 @@ public class Login extends JFrame {
 		gbc_panel.gridy = 4;
 		contentPane.add(panel, gbc_panel);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
-		
+
 		btLg = new JButton("Đăng nhập");
 		btLg.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btLg.addActionListener(new ActionListener() {
@@ -132,7 +132,7 @@ public class Login extends JFrame {
 			}
 		});
 		panel.add(btLg);
-		
+
 		btRe = new JButton("Đăng kí");
 		btRe.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btRe.addActionListener(new ActionListener() {
