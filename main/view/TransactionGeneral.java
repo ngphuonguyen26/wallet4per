@@ -3,11 +3,9 @@ package main.view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.GridLayout;
-
 import javax.swing.JButton;
 
+import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -22,85 +20,84 @@ public class TransactionGeneral extends JFrame {
 	private JPanel contentPane;
 	private JPanel mainChildForm;
 	private model.User currentuser;
+
 	public TransactionGeneral(JPanel childform, model.User currentuser) {
 
 		this.mainChildForm = childform;
+		this.currentuser = currentuser;
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 452, 304);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 
 		contentPane.setLayout(new GridLayout(4, 1, 0, 0));
 
-		// Top Panel
 		JPanel panel_Top = new JPanel();
-
 		contentPane.add(panel_Top);
 
-		// Add Transaction Panel
 		JPanel panel_AddTransaction = new JPanel();
-
 		contentPane.add(panel_AddTransaction);
 
 		JButton button_AddTransaction = new JButton("Thêm giao dịch");
+		button_AddTransaction.setPreferredSize(new Dimension(200, 40));
+		button_AddTransaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		button_AddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				AddTransaction add = new AddTransaction(childform,currentuser.getId());
+				AddTransaction add = new AddTransaction(
+						mainChildForm,
+						TransactionGeneral.this.currentuser.getId()
+				);
 
 				openForm(add);
 			}
 		});
 
-		button_AddTransaction.setPreferredSize(new Dimension(200, 40));
-		button_AddTransaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
 		panel_AddTransaction.add(button_AddTransaction);
 
-		// Transaction Day Panel
 		JPanel panel_TransactionDay = new JPanel();
-
 		contentPane.add(panel_TransactionDay);
 
 		JButton button_TransactionDay = new JButton("Giao dịch ngày");
+		button_TransactionDay.setPreferredSize(new Dimension(200, 40));
+		button_TransactionDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		button_TransactionDay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				TransDay day = new TransDay(childform);
+				TransDay day = new TransDay(
+						mainChildForm,
+						TransactionGeneral.this.currentuser.getId()
+				);
 
 				openForm(day);
 			}
 		});
 
-		button_TransactionDay.setPreferredSize(new Dimension(200, 40));
-		button_TransactionDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
 		panel_TransactionDay.add(button_TransactionDay);
 
-		// Transaction Panel
 		JPanel panel_Transaction = new JPanel();
-
 		contentPane.add(panel_Transaction);
 
 		JButton button_Transaction = new JButton("Giao dịch");
+		button_Transaction.setPreferredSize(new Dimension(200, 40));
+		button_Transaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		button_Transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				TransItem item = new TransItem(childform);
+				TransItem item = new TransItem(
+						mainChildForm,
+						TransactionGeneral.this.currentuser.getId()
+				);
 
 				openForm(item);
 			}
 		});
-
-		button_Transaction.setPreferredSize(new Dimension(200, 40));
-		button_Transaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		panel_Transaction.add(button_Transaction);
 	}
@@ -114,5 +111,8 @@ public class TransactionGeneral extends JFrame {
 		mainChildForm.add(form.getContentPane(), id);
 
 		cl.show(mainChildForm, id);
+
+		mainChildForm.revalidate();
+		mainChildForm.repaint();
 	}
 }

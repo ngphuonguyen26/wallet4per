@@ -1,29 +1,15 @@
 package main.view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import dao.TransactionDAO;
+import model.Transaction;
+
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import javax.swing.JComboBox;
-import java.awt.Insets;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
-import java.awt.CardLayout;
-import java.awt.Dimension;
-
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.Font;
-
-import javax.swing.JTextField;
-import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 public class StaMonth extends JFrame {
 
@@ -34,140 +20,157 @@ public class StaMonth extends JFrame {
 	private JTextField textField_Total;
 	private JPanel mainChildForm;
 
-	public StaMonth(JPanel childform) {
+	private JComboBox<String> comboBox_Month;
+	private JComboBox<String> comboBox_Year;
+	private JButton button_Load;
+	private JButton button_Exit;
+
+	private DefaultTableModel model_MonthlyStatistics;
+	private TransactionDAO transactionDAO;
+	private int userId;
+
+	public StaMonth(JPanel childform, int userId) {
 
 		this.mainChildForm = childform;
+		this.userId = userId;
+		this.transactionDAO = new TransactionDAO();
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 691, 456);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 750, 480);
 
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] {157, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[] {0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[] {
-				1.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE
-		};
-		gbl_contentPane.rowWeights = new double[] {
-				0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE
-		};
-
+		gbl_contentPane.columnWidths = new int[]{80, 120, 80, 120, 100, 100, 0};
+		gbl_contentPane.rowHeights = new int[]{35, 300, 40, 0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 
-		// Month Label
 		JLabel label_Month = new JLabel("Tháng:");
 		label_Month.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addComponent(label_Month, 0, 0);
 
-		GridBagConstraints gbc_label_Month = new GridBagConstraints();
-		gbc_label_Month.insets = new Insets(0, 0, 5, 5);
-		gbc_label_Month.gridx = 0;
-		gbc_label_Month.gridy = 0;
+		comboBox_Month = new JComboBox<>();
+		for (int i = 1; i <= 12; i++) {
+			comboBox_Month.addItem(String.valueOf(i));
+		}
+		comboBox_Month.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
+		addInput(comboBox_Month, 1, 0);
 
-		contentPane.add(label_Month, gbc_label_Month);
+		JLabel label_Year = new JLabel("Năm:");
+		label_Year.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addComponent(label_Year, 2, 0);
 
-		// Month ComboBox
-		JComboBox comboBox_Month = new JComboBox();
+		comboBox_Year = new JComboBox<>();
+		int currentYear = LocalDate.now().getYear();
+		for (int y = currentYear - 5; y <= currentYear + 1; y++) {
+			comboBox_Year.addItem(String.valueOf(y));
+		}
+		comboBox_Year.setSelectedItem(String.valueOf(currentYear));
+		addInput(comboBox_Year, 3, 0);
 
-		comboBox_Month.setPreferredSize(new Dimension(300, 22));
+		button_Load = new JButton("Xem");
+		button_Load.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addComponent(button_Load, 4, 0);
 
-		comboBox_Month.setModel(
-				new DefaultComboBoxModel(
-						new String[] {
-								"1", "2", "3", "4", "5", "6",
-								"7", "8", "9", "10", "11", "12"
-						}
-				)
-		);
-
-		GridBagConstraints gbc_comboBox_Month = new GridBagConstraints();
-		gbc_comboBox_Month.gridwidth = 4;
-		gbc_comboBox_Month.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox_Month.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox_Month.gridx = 1;
-		gbc_comboBox_Month.gridy = 0;
-
-		contentPane.add(comboBox_Month, gbc_comboBox_Month);
-
-		// Scroll Pane
-		JScrollPane scrollPane_Statistics = new JScrollPane();
-
-		GridBagConstraints gbc_scrollPane_Statistics = new GridBagConstraints();
-		gbc_scrollPane_Statistics.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane_Statistics.gridwidth = 5;
-		gbc_scrollPane_Statistics.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_Statistics.gridx = 0;
-		gbc_scrollPane_Statistics.gridy = 1;
-
-		contentPane.add(scrollPane_Statistics, gbc_scrollPane_Statistics);
-
-		// Table
-		table_MonthlyStatistics = new JTable();
-
-		table_MonthlyStatistics.setModel(
-				new DefaultTableModel(
-						new Object[][] {},
-						new String[] {
-								"Số tiền",
-								"Ngày"
-						}
-				)
-		);
-
-		scrollPane_Statistics.setViewportView(table_MonthlyStatistics);
-
-		// Total Label
-		JLabel label_Total = new JLabel("Tổng:");
-		label_Total.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		GridBagConstraints gbc_label_Total = new GridBagConstraints();
-		gbc_label_Total.insets = new Insets(0, 0, 5, 5);
-		gbc_label_Total.gridx = 0;
-		gbc_label_Total.gridy = 2;
-
-		contentPane.add(label_Total, gbc_label_Total);
-
-		// Total TextField
-		textField_Total = new JTextField();
-
-		textField_Total.setColumns(10);
-
-		GridBagConstraints gbc_textField_Total = new GridBagConstraints();
-		gbc_textField_Total.gridwidth = 3;
-		gbc_textField_Total.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_Total.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_Total.gridx = 1;
-		gbc_textField_Total.gridy = 2;
-
-		contentPane.add(textField_Total, gbc_textField_Total);
-
-		// Exit Button
-		JButton button_Exit = new JButton("Thoát");
-
-		button_Exit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				CardLayout cl = (CardLayout) mainChildForm.getLayout();
-
-				cl.previous(mainChildForm);
-
-				mainChildForm.remove(contentPane);
-
-				mainChildForm.revalidate();
-				mainChildForm.repaint();
+		model_MonthlyStatistics = new DefaultTableModel(
+				new Object[][]{},
+				new String[]{
+						"ID", "Ví", "Số tiền", "Danh mục", "Loại", "Ghi chú", "Ngày"
+				}
+		) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
 			}
-		});
+		};
 
+		table_MonthlyStatistics = new JTable(model_MonthlyStatistics);
+
+		JScrollPane scrollPane_Statistics = new JScrollPane(table_MonthlyStatistics);
+
+		GridBagConstraints gbc_scroll = new GridBagConstraints();
+		gbc_scroll.insets = new Insets(0, 0, 5, 5);
+		gbc_scroll.gridwidth = 6;
+		gbc_scroll.fill = GridBagConstraints.BOTH;
+		gbc_scroll.gridx = 0;
+		gbc_scroll.gridy = 1;
+		contentPane.add(scrollPane_Statistics, gbc_scroll);
+
+		JLabel label_Total = new JLabel("Tổng chi:");
+		label_Total.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addComponent(label_Total, 0, 2);
+
+		textField_Total = new JTextField();
+		textField_Total.setEditable(false);
+		addInput(textField_Total, 1, 2);
+
+		button_Exit = new JButton("Thoát");
 		button_Exit.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addComponent(button_Exit, 5, 2);
 
-		GridBagConstraints gbc_button_Exit = new GridBagConstraints();
-		gbc_button_Exit.insets = new Insets(0, 0, 5, 0);
-		gbc_button_Exit.gridx = 5;
-		gbc_button_Exit.gridy = 2;
+		addEvents();
+		loadData();
+	}
 
-		contentPane.add(button_Exit, gbc_button_Exit);
+	private void addComponent(Component component, int x, int y) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0, 0, 5, 5);
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.anchor = GridBagConstraints.WEST;
+		contentPane.add(component, gbc);
+	}
+
+	private void addInput(Component component, int x, int y) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0, 0, 5, 5);
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		contentPane.add(component, gbc);
+	}
+
+	private void addEvents() {
+		button_Load.addActionListener(e -> loadData());
+
+		button_Exit.addActionListener(e -> {
+			CardLayout cl = (CardLayout) mainChildForm.getLayout();
+			cl.previous(mainChildForm);
+			mainChildForm.revalidate();
+			mainChildForm.repaint();
+		});
+	}
+
+	private void loadData() {
+		model_MonthlyStatistics.setRowCount(0);
+
+		int month = Integer.parseInt((String) comboBox_Month.getSelectedItem());
+		int year = Integer.parseInt((String) comboBox_Year.getSelectedItem());
+
+		List<Transaction> list = transactionDAO.getTransactionsByMonth(userId, year, month);
+
+		BigDecimal totalExpense = BigDecimal.ZERO;
+
+		for (Transaction t : list) {
+			model_MonthlyStatistics.addRow(new Object[]{
+					t.getTransactionId(),
+					t.getWalletName(),
+					t.getAmount(),
+					t.getCategoryName(),
+					t.getType(),
+					t.getNote(),
+					t.getTransactionDate()
+			});
+
+			if (t.getType() == Transaction.TransactionType.EXPENSE) {
+				totalExpense = totalExpense.add(t.getAmount());
+			}
+		}
+
+		textField_Total.setText(totalExpense.toString());
 	}
 }

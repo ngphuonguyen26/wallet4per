@@ -79,7 +79,7 @@ public class UserGeneralControl {
             public void actionPerformed(ActionEvent e) {
 
                 StatisticsGeneral statistics =
-                        new StatisticsGeneral(view.getPanel_ChildForm());
+                        new StatisticsGeneral(view.getPanel_ChildForm(),view.getCurrentUser());
 
                 openChildForm(statistics);
             }
