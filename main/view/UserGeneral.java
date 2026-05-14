@@ -7,7 +7,9 @@ import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.CardLayout;
+
 import model.User;
+
 public class UserGeneral extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -19,10 +21,13 @@ public class UserGeneral extends JFrame {
 	private JButton button_Category;
 	private JButton button_Transaction;
 	private JButton button_Statistics;
+	private JButton button_Fund;
 	private JButton button_Logout;
 	private User currentUser;
+
 	public UserGeneral(User user) {
 		this.currentUser = user;
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(500, 150, 712, 450);
 
@@ -52,15 +57,16 @@ public class UserGeneral extends JFrame {
 		button_Statistics.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		panel_Menu.add(button_Statistics);
 
+		button_Fund = new JButton("Quỹ");
+		button_Fund.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		panel_Menu.add(button_Fund);
+
 		button_Logout = new JButton("Đăng xuất");
 		button_Logout.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		panel_Menu.add(button_Logout);
 
-		JPanel panel_BlankTop = new JPanel();
-		panel_Menu.add(panel_BlankTop);
-
-		JPanel panel_BlankBottom = new JPanel();
-		panel_Menu.add(panel_BlankBottom);
+		JPanel panel_Blank = new JPanel();
+		panel_Menu.add(panel_Blank);
 
 		panel_ChildForm = new JPanel();
 		getContentPane().add(panel_ChildForm, BorderLayout.CENTER);
@@ -91,9 +97,14 @@ public class UserGeneral extends JFrame {
 		return button_Statistics;
 	}
 
+	public JButton getButton_Fund() {
+		return button_Fund;
+	}
+
 	public JButton getButton_Logout() {
 		return button_Logout;
 	}
+
 	public User getCurrentUser() {
 		return currentUser;
 	}
