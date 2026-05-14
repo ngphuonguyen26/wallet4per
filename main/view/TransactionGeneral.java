@@ -21,8 +21,8 @@ public class TransactionGeneral extends JFrame {
 
 	private JPanel contentPane;
 	private JPanel mainChildForm;
-
-	public TransactionGeneral(JPanel childform) {
+	private model.User currentuser;
+	public TransactionGeneral(JPanel childform, model.User currentuser) {
 
 		this.mainChildForm = childform;
 
@@ -51,7 +51,7 @@ public class TransactionGeneral extends JFrame {
 		button_AddTransaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				AddTransaction add = new AddTransaction(childform);
+				AddTransaction add = new AddTransaction(childform,currentuser.getId());
 
 				openForm(add);
 			}

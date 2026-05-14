@@ -9,7 +9,7 @@ public class Main {
                 try {
                      Login view = new Login();
                      LoginController login = new LoginController(view);
-                     view.setVisible(true);
+                     view.setVisible(true) ;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

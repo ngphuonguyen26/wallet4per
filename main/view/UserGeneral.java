@@ -23,6 +23,7 @@ public class UserGeneral extends JFrame {
 	private JButton button_Statistics;
 	private JButton button_Fund;
 	private JButton button_Logout;
+
 	private User currentUser;
 
 	public UserGeneral(User user) {
@@ -71,6 +72,29 @@ public class UserGeneral extends JFrame {
 		panel_ChildForm = new JPanel();
 		getContentPane().add(panel_ChildForm, BorderLayout.CENTER);
 		panel_ChildForm.setLayout(new CardLayout(0, 0));
+
+		addEvents();
+	}
+
+	private void addEvents() {
+		button_Category.addActionListener(e -> showCategory());
+
+		button_Logout.addActionListener(e -> {
+			dispose();
+			new Login().setVisible(true);
+		});
+	}
+
+	private void showCategory() {
+		panel_ChildForm.removeAll();
+
+		Category categoryView = new Category();
+		new main.control.CategoryController(categoryView);
+
+		panel_ChildForm.add(categoryView.getContentPane(), "CATEGORY");
+
+		panel_ChildForm.revalidate();
+		panel_ChildForm.repaint();
 	}
 
 	public JPanel getPanel_ChildForm() {

@@ -54,6 +54,11 @@ public class UserGeneralControl {
             public void actionPerformed(ActionEvent e) {
 
                 Category category = new Category();
+
+                // load dữ liệu
+                new CategoryController(category);
+
+                // mở form
                 openChildForm(category);
             }
         });
@@ -63,7 +68,7 @@ public class UserGeneralControl {
             public void actionPerformed(ActionEvent e) {
 
                 TransactionGeneral transaction =
-                        new TransactionGeneral(view.getPanel_ChildForm());
+                        new TransactionGeneral(view.getPanel_ChildForm(),view.getCurrentUser());
 
                 openChildForm(transaction);
             }
