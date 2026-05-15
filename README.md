@@ -1,23 +1,9 @@
 # 🪙 Quản lý Chi tiêu Cá nhân
 ### Java Swing + SQL Server
 
-![Java](https://img.shields.io/badge/Java-8+-orange)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-2017+-blue)
-![Status](https://img.shields.io/badge/Project-Completed-green)
 
 ---
 
-## 📑 Mục lục
-1. [Giới thiệu](#-giới-thiệu)
-2. [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
-3. [Chức năng chính](#-chức-năng-chính)
-4. [Cài đặt & Cấu hình](#️-cài-đặt--cấu-hình)
-5. [Tài khoản mặc định](#-tài-khoản-mặc-định)
-6. [Cấu trúc Database](#-cấu-trúc-database)
-7. [Nhóm thực hiện](#-nhóm-thực-hiện)
-8. [Tài liệu tham khảo](#-tài-liệu-tham-khảo)
-
----
 
 ## 💡 Giới thiệu
 Ứng dụng **Quản lý Chi tiêu Cá nhân** giúp người dùng:
