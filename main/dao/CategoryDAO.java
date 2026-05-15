@@ -1,107 +1,93 @@
-package main.dao;
-
-import main.model.Category;
-import util.DBConnection;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Category;
+import model.Category.CategoryType;
+import util.DBConnection;
 
 public class CategoryDAO {
-
+    
     private Connection getConn() {
         return ((DBConnection) DBConnection.getInstance()).getConnection();
     }
-
-    // Lấy tất cả danh mục
-    public List<Category> getAllCategories() {
-
+    
+    // Lấy tất cả danh mục (hệ thống + của user)
+    public List<Category> getAllCategoriesByUser(int userId) {
         List<Category> list = new ArrayList<>();
-
-        String sql = "SELECT * FROM categories ORDER BY type, category_name";
-
-        try (PreparedStatement ps = getConn().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        String sql = "SELECT * FROM categories WHERE user_id IS NULL OR user_id = ? ORDER BY type, category_name";
+        
+        try (PreparedStatement ps = getConn().prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            
             while (rs.next()) {
-                list.add(mapResultSet(rs));
+                Category category = new Category();
+                category.setCategoryId(rs.getInt("category_id"));
+                
+                // Xử lý user_id có thể NULL
+                int uid = rs.getInt("user_id");
+                if (rs.wasNull()) {
+                    category.setUserId(null);
+                } else {
+                    category.setUserId(uid);
+                }
+                
+                category.setCategoryName(rs.getString("category_name"));
+                
+                // Chuyển đổi type từ database
+                String dbType = rs.getString("type");
+                System.out.println("Loading category: " + category.getCategoryName() + ", type=" + dbType); // Debug
+                
+                if ("INCOME".equals(dbType)) {
+                    category.setType(CategoryType.INCOME);
+                } else if ("EXPENSE".equals(dbType)) {
+                    category.setType(CategoryType.EXPENSE);
+                } else {
+                    // Fallback cho dữ liệu cũ
+                    category.setType(CategoryType.fromString(dbType));
+                }
+                
+                category.setIcon(rs.getString("icon"));
+                category.setDefault(rs.getBoolean("is_default"));
+                
+                list.add(category);
             }
-
+            
+            System.out.println("Loaded " + list.size() + " categories"); // Debug
+            
         } catch (SQLException e) {
-            System.err.println("[CategoryDAO] getAllCategories: " + e.getMessage());
+            System.err.println("Error in getAllCategoriesByUser: " + e.getMessage());
+            e.printStackTrace();
         }
-
+        
         return list;
     }
-
-    // Lấy danh mục theo loại
-    public List<Category> getCategoriesByType(Category.CategoryType type) {
-
+    
+    // Lấy danh mục theo type (INCOME hoặc EXPENSE)
+    public List<Category> getCategoriesByType(int userId, CategoryType type) {
         List<Category> list = new ArrayList<>();
-
-        String sql = "SELECT * FROM categories WHERE type = ? ORDER BY category_name";
-
+        String sql = "SELECT * FROM categories WHERE (user_id IS NULL OR user_id = ?) AND type = ? ORDER BY category_name";
+        
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
-
-            ps.setString(1, type.name());
-
-            try (ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    list.add(mapResultSet(rs));
-                }
+            ps.setInt(1, userId);
+            ps.setString(2, type.name()); // "INCOME" hoặc "EXPENSE"
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Category category = new Category();
+                category.setCategoryId(rs.getInt("category_id"));
+                category.setUserId(rs.getInt("user_id"));
+                category.setCategoryName(rs.getString("category_name"));
+                category.setType(type);
+                category.setIcon(rs.getString("icon"));
+                category.setDefault(rs.getBoolean("is_default"));
+                list.add(category);
             }
-
         } catch (SQLException e) {
-            System.err.println("[CategoryDAO] getCategoriesByType: " + e.getMessage());
+            System.err.println("Error in getCategoriesByType: " + e.getMessage());
         }
-
         return list;
-    }
-
-    // Lấy danh mục theo ID
-    public Category getCategoryById(int categoryId) {
-
-        String sql = "SELECT * FROM categories WHERE category_id = ?";
-
-        try (PreparedStatement ps = getConn().prepareStatement(sql)) {
-
-            ps.setInt(1, categoryId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-
-                if (rs.next()) {
-                    return mapResultSet(rs);
-                }
-            }
-
-        } catch (SQLException e) {
-            System.err.println("[CategoryDAO] getCategoryById: " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    private Category mapResultSet(ResultSet rs) throws SQLException {
-
-        String typeStr = rs.getString("type");
-
-        Category.CategoryType type;
-
-        if (typeStr.equalsIgnoreCase("Thu")) {
-            type = Category.CategoryType.INCOME;
-        } else if (typeStr.equalsIgnoreCase("Chi")) {
-            type = Category.CategoryType.EXPENSE;
-        } else {
-            type = Category.CategoryType.valueOf(typeStr.toUpperCase());
-        }
-
-        return new Category(
-                rs.getInt("category_id"),
-                rs.getString("category_name"),
-                type,
-                rs.getString("icon"),
-                rs.getBoolean("is_default")
-        );
     }
 }

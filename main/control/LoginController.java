@@ -1,14 +1,14 @@
-package main.control;
+package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import main.view.Login;
-import main.control.RegisterController;
-import main.view.UserGeneral;
+import view.Login;
+import control.RegisterController;
+import view.UserGeneral;
 import model.User;
 import dao.UserDAO;
-import main.view.Regist;
+import view.Regist;
 import javax.swing.*;
 
 public class LoginController {

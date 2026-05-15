@@ -1,4 +1,4 @@
-package main.control;
+package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import dao.UserDAO;
-import main.view.Login;
-import main.view.Regist;
+import view.Login;
+import view.Regist;
 import model.User;
 
 public class RegisterController {

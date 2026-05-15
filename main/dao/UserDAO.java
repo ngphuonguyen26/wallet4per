@@ -93,30 +93,73 @@ public class UserDAO {
         }
     }
     public boolean deleteUser(int userId) {
-
-        String sql = "DELETE FROM users WHERE user_id = ?";
-
-        try (PreparedStatement ps =
-                     getConn().prepareStatement(sql)) {
-
+    Connection conn = getConn();
+    
+    try {
+        conn.setAutoCommit(false);
+        
+        // 1. Xóa savings_transactions trước
+        String sql1 = "DELETE FROM savings_transactions WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql1)) {
             ps.setInt(1, userId);
-
-            return ps.executeUpdate() > 0;
-
+            ps.executeUpdate();
+        }
+        
+        // 2. Xóa savings_funds
+        String sql2 = "DELETE FROM savings_funds WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql2)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+        
+        // 3. Xóa transactions
+        String sql3 = "DELETE FROM transactions WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql3)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+        
+        // 4. Xóa wallets
+        String sql4 = "DELETE FROM wallets WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql4)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+        
+        // 5. Cập nhật categories (set user_id = NULL)
+        String sql5 = "UPDATE categories SET user_id = NULL WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql5)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+        
+        // 6. Cuối cùng xóa user
+        String sql6 = "DELETE FROM users WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql6)) {
+            ps.setInt(1, userId);
+            int result = ps.executeUpdate();
+            
+            conn.commit();
+            return result > 0;
+            
         } catch (SQLException e) {
-
-            System.err.println(
-                    "[UserDAO] deleteUser: "
-                            + e.getMessage()
-            );
-
+            conn.rollback();
+            System.err.println("[UserDAO] deleteUser: " + e.getMessage());
             return false;
         }
+        
+    } catch (SQLException e) {
+        try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+        System.err.println("[UserDAO] deleteUser error: " + e.getMessage());
+        return false;
+    } finally {
+        try { conn.setAutoCommit(true); } catch (SQLException e) { e.printStackTrace(); }
     }
+}
     // Helper: map ResultSet -> User
     private User mapResultSet(ResultSet rs) throws SQLException {
         User u = new User();
-        u.setId(rs.getInt("user_id"));
+        u.setUserId(rs.getInt("user_id"));
         u.setUsername(rs.getString("username"));
         u.setPassword(rs.getString("password"));
         u.setFullName(rs.getString("fullname"));

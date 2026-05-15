@@ -238,21 +238,40 @@ public class TransactionDAO {
     }
 
     private Transaction mapResultSet(ResultSet rs) throws SQLException {
-        Transaction t = new Transaction();
-        t.setTransactionId(rs.getInt("transaction_id"));
-        t.setUserId(rs.getInt("user_id"));
-        t.setWalletId(rs.getInt("wallet_id"));
-        t.setCategoryId(rs.getInt("category_id"));
-        t.setAmount(rs.getBigDecimal("amount"));
-        t.setType(Transaction.TransactionType.valueOf(rs.getString("type")));
-        t.setNote(rs.getString("note"));
-        Timestamp td = rs.getTimestamp("transaction_date");
-        if (td != null) t.setTransactionDate(td.toLocalDateTime());
-        Timestamp ca = rs.getTimestamp("created_at");
-        if (ca != null) t.setCreatedAt(ca.toLocalDateTime());
-        // Các field join
-        try { t.setWalletName(rs.getString("wallet_name")); } catch (SQLException ignored) {}
-        try { t.setCategoryName(rs.getString("category_name")); } catch (SQLException ignored) {}
-        return t;
+    Transaction t = new Transaction();
+    t.setTransactionId(rs.getInt("transaction_id"));
+    t.setUserId(rs.getInt("user_id"));
+    t.setWalletId(rs.getInt("wallet_id"));
+    t.setCategoryId(rs.getInt("category_id"));
+    t.setAmount(rs.getBigDecimal("amount"));
+    
+    // Xử lý type - chuyển đổi từ dữ liệu cũ
+    String typeStr = rs.getString("type");
+    Transaction.TransactionType type;
+    try {
+        type = Transaction.TransactionType.valueOf(typeStr);
+    } catch (IllegalArgumentException e) {
+        // Chuyển đổi dữ liệu cũ
+        if ("Thu".equals(typeStr)) {
+            type = Transaction.TransactionType.INCOME;
+            System.out.println("[WARN] Converted 'Thu' to INCOME for transaction: " + rs.getInt("transaction_id"));
+        } else if ("Chi".equals(typeStr)) {
+            type = Transaction.TransactionType.EXPENSE;
+            System.out.println("[WARN] Converted 'Chi' to EXPENSE for transaction: " + rs.getInt("transaction_id"));
+        } else {
+            throw new SQLException("Unknown transaction type: " + typeStr, e);
+        }
     }
+    t.setType(type);
+    
+    t.setNote(rs.getString("note"));
+    Timestamp td = rs.getTimestamp("transaction_date");
+    if (td != null) t.setTransactionDate(td.toLocalDateTime());
+    Timestamp ca = rs.getTimestamp("created_at");
+    if (ca != null) t.setCreatedAt(ca.toLocalDateTime());
+    // Các field join
+    try { t.setWalletName(rs.getString("wallet_name")); } catch (SQLException ignored) {}
+    try { t.setCategoryName(rs.getString("category_name")); } catch (SQLException ignored) {}
+    return t;
+}
 }

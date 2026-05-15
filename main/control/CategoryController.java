@@ -1,30 +1,32 @@
-package main.control;
+package control;
 
-import main.dao.CategoryDAO;
-import main.view.Category;
-
-import javax.swing.table.DefaultTableModel;
+import dao.CategoryDAO;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import view.Category;
 
 public class CategoryController {
 
-    private Category view;
-    private CategoryDAO categoryDAO;
+    private final Category view;
+    private final CategoryDAO categoryDAO;
+    private int userId;
 
-    public CategoryController(Category view) {
+    public CategoryController(Category view, int userId) {
         this.view = view;
+        this.userId = userId;
         this.categoryDAO = new CategoryDAO();
 
         loadCategories();
     }
+    
 
     public void loadCategories() {
         DefaultTableModel tableModel = view.getModel_Category();
         tableModel.setRowCount(0);
 
-        List<main.model.Category> categoryList = categoryDAO.getAllCategories();
+        List<model.Category> categoryList = categoryDAO.getAllCategoriesByUser(userId);
 
-        for (main.model.Category category : categoryList) {
+        for (model.Category category : categoryList) {
             tableModel.addRow(new Object[]{
                     category.getCategoryId(),
                     category.getCategoryName(),

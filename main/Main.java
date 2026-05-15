@@ -1,6 +1,5 @@
-package main;
-import main.control.LoginController;
-import main.view.*;
+import control.LoginController;
+import view.*;
 public class Main {
 	public static void main(String args[])
 	{

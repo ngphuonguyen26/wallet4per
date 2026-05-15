@@ -1,4 +1,4 @@
-package main.control;
+package control;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
@@ -8,10 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import dao.UserDAO;
-import main.view.ChangePassw;
-import main.view.Login;
-import main.view.TTCNGeneral;
-import main.view.UserInfo;
+import view.ChangePassw;
+import view.Login;
+import view.TTCNGeneral;
+import view.UserInfo;
 
 public class TTCNGeneralController {
 

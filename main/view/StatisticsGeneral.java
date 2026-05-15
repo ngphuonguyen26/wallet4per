@@ -1,86 +1,68 @@
-package main.view;
+package view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-
-import java.awt.GridLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.Font;
+import model.User;
 
 public class StatisticsGeneral extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel contentPane;
-	private JPanel mainChildForm;
-	private model.User currentUser;
+    private JPanel contentPane;
+    private JPanel mainChildForm;
+    private User currentUser;
 
-	public StatisticsGeneral(JPanel childForm, model.User currentUser) {
+    public StatisticsGeneral(JPanel childForm, User currentUser) {
+        this.mainChildForm = childForm;
+        this.currentUser = currentUser;
 
-		this.mainChildForm = childForm;
-		this.currentUser = currentUser;
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 450, 300);
+        setTitle("Thống kê chi tiêu");
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(new GridLayout(4, 1, 0, 0));
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+        contentPane.add(new JPanel()); // spacer top
 
-		contentPane.setLayout(new GridLayout(4, 1, 0, 0));
+        addMenuButton("📅 Thống kê theo ngày", e -> {
+            // FIX: dùng getUserId() thay vì getId()
+            StaDays day = new StaDays(mainChildForm, currentUser.getUserId());
+            openForm(day);
+        });
 
-		JPanel panel_Top = new JPanel();
-		contentPane.add(panel_Top);
+        addMenuButton("📆 Thống kê theo tháng", e -> {
+            StaMonth month = new StaMonth(mainChildForm, currentUser.getUserId());
+            openForm(month);
+        });
 
-		JPanel panel_Day = new JPanel();
-		contentPane.add(panel_Day);
+        addMenuButton("🗓 Thống kê theo năm", e -> {
+            StaYear year = new StaYear(mainChildForm, currentUser.getUserId());
+            openForm(year);
+        });
+    }
 
-		JButton button_StatisticsDay = new JButton("Thống kê theo ngày");
-		button_StatisticsDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		button_StatisticsDay.setPreferredSize(new Dimension(200, 40));
-		button_StatisticsDay.addActionListener(e -> {
-			StaDays day = new StaDays(mainChildForm, currentUser.getId());
-			openForm(day);
-		});
-		panel_Day.add(button_StatisticsDay);
+    private void addMenuButton(String label, java.awt.event.ActionListener listener) {
+        JPanel panel = new JPanel();
+        JButton btn = new JButton(label);
+        btn.setPreferredSize(new Dimension(220, 40));
+        btn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        btn.addActionListener(listener);
+        panel.add(btn);
+        contentPane.add(panel);
+    }
 
-		JPanel panel_Month = new JPanel();
-		contentPane.add(panel_Month);
+    public void openForm(JFrame form) {
+        String id = String.valueOf(form.hashCode());
+        mainChildForm.add(form.getContentPane(), id);
 
-		JButton button_StatisticsMonth = new JButton("Thống kê theo tháng");
-		button_StatisticsMonth.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		button_StatisticsMonth.setPreferredSize(new Dimension(200, 40));
-		button_StatisticsMonth.addActionListener(e -> {
-			StaMonth month = new StaMonth(mainChildForm, currentUser.getId());
-			openForm(month);
-		});
-		panel_Month.add(button_StatisticsMonth);
+        CardLayout cl = (CardLayout) mainChildForm.getLayout();
+        cl.show(mainChildForm, id);
 
-		JPanel panel_Year = new JPanel();
-		contentPane.add(panel_Year);
-
-		JButton button_StatisticsYear = new JButton("Thống kê theo năm");
-		button_StatisticsYear.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		button_StatisticsYear.setPreferredSize(new Dimension(200, 40));
-		button_StatisticsYear.addActionListener(e -> {
-			StaYear year = new StaYear(mainChildForm, currentUser.getId());
-			openForm(year);
-		});
-		panel_Year.add(button_StatisticsYear);
-	}
-
-	public void openForm(JFrame form) {
-		CardLayout cl = (CardLayout) mainChildForm.getLayout();
-
-		String id = String.valueOf(form.hashCode());
-
-		mainChildForm.add(form.getContentPane(), id);
-		cl.show(mainChildForm, id);
-
-		mainChildForm.revalidate();
-		mainChildForm.repaint();
-	}
+        mainChildForm.revalidate();
+        mainChildForm.repaint();
+    }
 }

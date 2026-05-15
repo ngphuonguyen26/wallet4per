@@ -1,118 +1,68 @@
-package main.view;
+package view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-
-import java.awt.GridLayout;
-import java.awt.Font;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import model.User;
 
 public class TransactionGeneral extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel contentPane;
-	private JPanel mainChildForm;
-	private model.User currentuser;
+    private JPanel contentPane;
+    private JPanel mainChildForm;
+    // FIX: đổi tên biến nhất quán thành currentUser (trước là currentuser)
+    private User currentUser;
 
-	public TransactionGeneral(JPanel childform, model.User currentuser) {
+    public TransactionGeneral(JPanel childform, User currentUser) {
+        this.mainChildForm = childform;
+        this.currentUser = currentUser;
 
-		this.mainChildForm = childform;
-		this.currentuser = currentuser;
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 452, 304);
+        setTitle("Giao dịch");
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 452, 304);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(new GridLayout(4, 1, 0, 0));
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+        contentPane.add(new JPanel()); // spacer
 
-		contentPane.setLayout(new GridLayout(4, 1, 0, 0));
+        addMenuButton("➕ Thêm giao dịch", e -> {
+            // FIX: dùng getUserId() thay vì getId()
+            AddTransaction add = new AddTransaction(mainChildForm, currentUser.getUserId());
+            openForm(add);
+        });
 
-		JPanel panel_Top = new JPanel();
-		contentPane.add(panel_Top);
+        addMenuButton("📋 Giao dịch theo ngày", e -> {
+            TransDay day = new TransDay(mainChildForm, currentUser.getUserId());
+            openForm(day);
+        });
 
-		JPanel panel_AddTransaction = new JPanel();
-		contentPane.add(panel_AddTransaction);
+        addMenuButton("📄 Tất cả giao dịch", e -> {
+            TransItem item = new TransItem(mainChildForm, currentUser.getUserId());
+            openForm(item);
+        });
+    }
 
-		JButton button_AddTransaction = new JButton("Thêm giao dịch");
-		button_AddTransaction.setPreferredSize(new Dimension(200, 40));
-		button_AddTransaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
+    private void addMenuButton(String label, java.awt.event.ActionListener listener) {
+        JPanel panel = new JPanel();
+        JButton btn = new JButton(label);
+        btn.setPreferredSize(new Dimension(200, 40));
+        btn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        btn.addActionListener(listener);
+        panel.add(btn);
+        contentPane.add(panel);
+    }
 
-		button_AddTransaction.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				AddTransaction add = new AddTransaction(
-						mainChildForm,
-						TransactionGeneral.this.currentuser.getId()
-				);
-
-				openForm(add);
-			}
-		});
-
-		panel_AddTransaction.add(button_AddTransaction);
-
-		JPanel panel_TransactionDay = new JPanel();
-		contentPane.add(panel_TransactionDay);
-
-		JButton button_TransactionDay = new JButton("Giao dịch ngày");
-		button_TransactionDay.setPreferredSize(new Dimension(200, 40));
-		button_TransactionDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		button_TransactionDay.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				TransDay day = new TransDay(
-						mainChildForm,
-						TransactionGeneral.this.currentuser.getId()
-				);
-
-				openForm(day);
-			}
-		});
-
-		panel_TransactionDay.add(button_TransactionDay);
-
-		JPanel panel_Transaction = new JPanel();
-		contentPane.add(panel_Transaction);
-
-		JButton button_Transaction = new JButton("Giao dịch");
-		button_Transaction.setPreferredSize(new Dimension(200, 40));
-		button_Transaction.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		button_Transaction.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				TransItem item = new TransItem(
-						mainChildForm,
-						TransactionGeneral.this.currentuser.getId()
-				);
-
-				openForm(item);
-			}
-		});
-
-		panel_Transaction.add(button_Transaction);
-	}
-
-	public void openForm(JFrame form) {
-
-		CardLayout cl = (CardLayout) mainChildForm.getLayout();
-
-		String id = String.valueOf(form.hashCode());
-
-		mainChildForm.add(form.getContentPane(), id);
-
-		cl.show(mainChildForm, id);
-
-		mainChildForm.revalidate();
-		mainChildForm.repaint();
-	}
+    public void openForm(JFrame form) {
+        CardLayout cl = (CardLayout) mainChildForm.getLayout();
+        String id = String.valueOf(form.hashCode());
+        mainChildForm.add(form.getContentPane(), id);
+        cl.show(mainChildForm, id);
+        mainChildForm.revalidate();
+        mainChildForm.repaint();
+    }
+    
 }

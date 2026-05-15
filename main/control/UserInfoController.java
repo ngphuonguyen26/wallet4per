@@ -1,10 +1,10 @@
-package main.control;
+package control;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.User;
-import main.view.UserInfo;
+import view.UserInfo;
 
 public class UserInfoController {
 

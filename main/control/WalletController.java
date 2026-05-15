@@ -1,16 +1,15 @@
-package main.control;
+package control;
 
+import dao.WalletDAO;
 import java.util.List;
-
-import main.dao.WalletDAO;
 
 public class WalletController {
 
-    private final main.view.Wallet view;
+    private final view.Wallet view;
     private final WalletDAO walletDAO;
     private final int userId;
 
-    public WalletController(main.view.Wallet view, int userId) {
+    public WalletController(view.Wallet view, int userId) {
         this.view = view;
         this.userId = userId;
         this.walletDAO = new WalletDAO();
@@ -27,7 +26,7 @@ public class WalletController {
             view.getModel_Wallet().addRow(new Object[]{
                     w.getWalletId(),
                     w.getWalletName(),
-                    w.getWalletType(),
+                    w.getWalletType().getDisplayName(),
                     w.getBalance()
             });
         }

@@ -1,176 +1,129 @@
-package main.view;
+package view;
 
 import dao.TransactionDAO;
-import model.Transaction;
-
+import java.awt.*;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
+import model.Transaction;
 
+/**
+ * Thống kê chi tiêu theo THÁNG
+ */
 public class StaMonth extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static final NumberFormat VND = NumberFormat.getInstance(new Locale("vi", "VN"));
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	private JPanel contentPane;
-	private JTable table_MonthlyStatistics;
-	private JTextField textField_Total;
-	private JPanel mainChildForm;
+    private JPanel contentPane, mainChildForm;
+    private JTable table;
+    private JTextField textField_TotalIncome, textField_TotalExpense;
+    private JComboBox<String> comboBox_Month, comboBox_Year;
+    private JButton button_Load, button_Exit;
+    private DefaultTableModel model;
+    private TransactionDAO transactionDAO;
+    private int userId;
 
-	private JComboBox<String> comboBox_Month;
-	private JComboBox<String> comboBox_Year;
-	private JButton button_Load;
-	private JButton button_Exit;
+    public StaMonth(JPanel childform, int userId) {
+        this.mainChildForm = childform;
+        this.userId = userId;
+        this.transactionDAO = new TransactionDAO();
 
-	private DefaultTableModel model_MonthlyStatistics;
-	private TransactionDAO transactionDAO;
-	private int userId;
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 760, 490);
+        setTitle("Thống kê theo tháng");
 
-	public StaMonth(JPanel childform, int userId) {
+        contentPane = new JPanel(new BorderLayout(8, 8));
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        setContentPane(contentPane);
 
-		this.mainChildForm = childform;
-		this.userId = userId;
-		this.transactionDAO = new TransactionDAO();
+        // Top
+        JPanel panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelTop.add(new JLabel("Tháng:"));
+        comboBox_Month = new JComboBox<>();
+        for (int i = 1; i <= 12; i++) comboBox_Month.addItem(String.valueOf(i));
+        comboBox_Month.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
+        panelTop.add(comboBox_Month);
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 750, 480);
+        panelTop.add(new JLabel("Năm:"));
+        comboBox_Year = new JComboBox<>();
+        int y = LocalDate.now().getYear();
+        for (int i = y - 5; i <= y + 1; i++) comboBox_Year.addItem(String.valueOf(i));
+        comboBox_Year.setSelectedItem(String.valueOf(y));
+        panelTop.add(comboBox_Year);
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-		setContentPane(contentPane);
+        button_Load = new JButton("Xem");
+        button_Exit = new JButton("Thoát");
+        panelTop.add(button_Load);
+        panelTop.add(button_Exit);
+        contentPane.add(panelTop, BorderLayout.NORTH);
 
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{80, 120, 80, 120, 100, 100, 0};
-		gbl_contentPane.rowHeights = new int[]{35, 300, 40, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
+        // Table
+        model = new DefaultTableModel(
+                new String[]{"ID", "Ví", "Danh mục", "Loại", "Số tiền", "Ghi chú", "Ngày"}, 0) {
+            public boolean isCellEditable(int r, int c) { return false; }
+        };
+        table = new JTable(model);
+        table.setRowHeight(24);
+        contentPane.add(new JScrollPane(table), BorderLayout.CENTER);
 
-		JLabel label_Month = new JLabel("Tháng:");
-		label_Month.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addComponent(label_Month, 0, 0);
+        // Bottom
+        JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 5));
+        panelBottom.add(new JLabel("Tổng thu:"));
+        textField_TotalIncome = new JTextField(12); textField_TotalIncome.setEditable(false);
+        panelBottom.add(textField_TotalIncome);
+        panelBottom.add(new JLabel("Tổng chi:"));
+        textField_TotalExpense = new JTextField(12); textField_TotalExpense.setEditable(false);
+        panelBottom.add(textField_TotalExpense);
+        contentPane.add(panelBottom, BorderLayout.SOUTH);
 
-		comboBox_Month = new JComboBox<>();
-		for (int i = 1; i <= 12; i++) {
-			comboBox_Month.addItem(String.valueOf(i));
-		}
-		comboBox_Month.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
-		addInput(comboBox_Month, 1, 0);
+        addEvents();
+        loadData();
+    }
 
-		JLabel label_Year = new JLabel("Năm:");
-		label_Year.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addComponent(label_Year, 2, 0);
+    private void addEvents() {
+        button_Load.addActionListener(e -> loadData());
+        button_Exit.addActionListener(e -> {
+            CardLayout cl = (CardLayout) mainChildForm.getLayout();
+            cl.previous(mainChildForm);
+            mainChildForm.revalidate(); mainChildForm.repaint();
+        });
+    }
 
-		comboBox_Year = new JComboBox<>();
-		int currentYear = LocalDate.now().getYear();
-		for (int y = currentYear - 5; y <= currentYear + 1; y++) {
-			comboBox_Year.addItem(String.valueOf(y));
-		}
-		comboBox_Year.setSelectedItem(String.valueOf(currentYear));
-		addInput(comboBox_Year, 3, 0);
+    private void loadData() {
+        model.setRowCount(0);
+        int month = Integer.parseInt((String) comboBox_Month.getSelectedItem());
+        int year  = Integer.parseInt((String) comboBox_Year.getSelectedItem());
 
-		button_Load = new JButton("Xem");
-		button_Load.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addComponent(button_Load, 4, 0);
+        List<Transaction> list = transactionDAO.getTransactionsByMonth(userId, year, month);
+        BigDecimal totalIncome = BigDecimal.ZERO, totalExpense = BigDecimal.ZERO;
 
-		model_MonthlyStatistics = new DefaultTableModel(
-				new Object[][]{},
-				new String[]{
-						"ID", "Ví", "Số tiền", "Danh mục", "Loại", "Ghi chú", "Ngày"
-				}
-		) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
+        for (Transaction t : list) {
+            // FIX: getDisplayName() → "Thu" / "Chi"
+            String typeStr = t.getType().getDisplayName();
+            model.addRow(new Object[]{
+                    t.getTransactionId(),
+                    t.getWalletName(),
+                    t.getCategoryName(),
+                    typeStr,
+                    VND.format(t.getAmount()) + " đ",
+                    t.getNote() != null ? t.getNote() : "",
+                    t.getTransactionDate() != null ? t.getTransactionDate().format(FMT) : ""
+            });
+            if (t.getType() == Transaction.TransactionType.INCOME)
+                totalIncome = totalIncome.add(t.getAmount());
+            else
+                totalExpense = totalExpense.add(t.getAmount());
+        }
 
-		table_MonthlyStatistics = new JTable(model_MonthlyStatistics);
-
-		JScrollPane scrollPane_Statistics = new JScrollPane(table_MonthlyStatistics);
-
-		GridBagConstraints gbc_scroll = new GridBagConstraints();
-		gbc_scroll.insets = new Insets(0, 0, 5, 5);
-		gbc_scroll.gridwidth = 6;
-		gbc_scroll.fill = GridBagConstraints.BOTH;
-		gbc_scroll.gridx = 0;
-		gbc_scroll.gridy = 1;
-		contentPane.add(scrollPane_Statistics, gbc_scroll);
-
-		JLabel label_Total = new JLabel("Tổng chi:");
-		label_Total.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addComponent(label_Total, 0, 2);
-
-		textField_Total = new JTextField();
-		textField_Total.setEditable(false);
-		addInput(textField_Total, 1, 2);
-
-		button_Exit = new JButton("Thoát");
-		button_Exit.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addComponent(button_Exit, 5, 2);
-
-		addEvents();
-		loadData();
-	}
-
-	private void addComponent(Component component, int x, int y) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(0, 0, 5, 5);
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.anchor = GridBagConstraints.WEST;
-		contentPane.add(component, gbc);
-	}
-
-	private void addInput(Component component, int x, int y) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(0, 0, 5, 5);
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		contentPane.add(component, gbc);
-	}
-
-	private void addEvents() {
-		button_Load.addActionListener(e -> loadData());
-
-		button_Exit.addActionListener(e -> {
-			CardLayout cl = (CardLayout) mainChildForm.getLayout();
-			cl.previous(mainChildForm);
-			mainChildForm.revalidate();
-			mainChildForm.repaint();
-		});
-	}
-
-	private void loadData() {
-		model_MonthlyStatistics.setRowCount(0);
-
-		int month = Integer.parseInt((String) comboBox_Month.getSelectedItem());
-		int year = Integer.parseInt((String) comboBox_Year.getSelectedItem());
-
-		List<Transaction> list = transactionDAO.getTransactionsByMonth(userId, year, month);
-
-		BigDecimal totalExpense = BigDecimal.ZERO;
-
-		for (Transaction t : list) {
-			model_MonthlyStatistics.addRow(new Object[]{
-					t.getTransactionId(),
-					t.getWalletName(),
-					t.getAmount(),
-					t.getCategoryName(),
-					t.getType(),
-					t.getNote(),
-					t.getTransactionDate()
-			});
-
-			if (t.getType() == Transaction.TransactionType.EXPENSE) {
-				totalExpense = totalExpense.add(t.getAmount());
-			}
-		}
-
-		textField_Total.setText(totalExpense.toString());
-	}
+        textField_TotalIncome.setText(VND.format(totalIncome) + " đ");
+        textField_TotalExpense.setText(VND.format(totalExpense) + " đ");
+    }
 }

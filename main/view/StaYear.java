@@ -1,188 +1,123 @@
-package main.view;
+package view;
 
 import dao.TransactionDAO;
-import model.Transaction;
-
+import java.awt.*;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import model.Transaction;
 
-import java.awt.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-
+/**
+ * Thống kê chi tiêu theo NĂM
+ */
 public class StaYear extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static final NumberFormat VND = NumberFormat.getInstance(new Locale("vi", "VN"));
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-	private JPanel contentPane;
-	private JTable table_YearlyStatistics;
-	private JTextField textField_Year;
-	private JTextField textField_Total;
-	private JButton button_Exit;
-	private JButton button_Load;
-	private JPanel mainChildForm;
+    private JPanel contentPane, mainChildForm;
+    private JTable table;
+    private JTextField textField_Year, textField_TotalIncome, textField_TotalExpense;
+    private JButton button_Load, button_Exit;
+    private DefaultTableModel model;
+    private TransactionDAO transactionDAO;
+    private int userId;
 
-	private DefaultTableModel model_YearlyStatistics;
-	private TransactionDAO transactionDAO;
-	private int userId;
+    public StaYear(JPanel childform, int userId) {
+        this.mainChildForm = childform;
+        this.userId = userId;
+        this.transactionDAO = new TransactionDAO();
 
-	public StaYear(JPanel childform, int userId) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 760, 510);
+        setTitle("Thống kê theo năm");
 
-		this.mainChildForm = childform;
-		this.userId = userId;
-		this.transactionDAO = new TransactionDAO();
+        contentPane = new JPanel(new BorderLayout(8, 8));
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        setContentPane(contentPane);
 
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 750, 500);
+        // Top
+        JPanel panelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelTop.add(new JLabel("Năm:"));
+        textField_Year = new JTextField(6);
+        textField_Year.setText(String.valueOf(LocalDate.now().getYear()));
+        panelTop.add(textField_Year);
+        button_Load = new JButton("Xem");
+        button_Exit = new JButton("Thoát");
+        panelTop.add(button_Load);
+        panelTop.add(button_Exit);
+        contentPane.add(panelTop, BorderLayout.NORTH);
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-		setContentPane(contentPane);
+        // Table
+        model = new DefaultTableModel(
+                new String[]{"ID", "Ví", "Danh mục", "Loại", "Số tiền", "Ghi chú", "Ngày"}, 0) {
+            public boolean isCellEditable(int r, int c) { return false; }
+        };
+        table = new JTable(model);
+        table.setRowHeight(24);
+        contentPane.add(new JScrollPane(table), BorderLayout.CENTER);
 
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{80, 180, 100, 100, 100, 100, 0};
-		gbl_contentPane.rowHeights = new int[]{35, 330, 40, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
+        // Bottom
+        JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 5));
+        panelBottom.add(new JLabel("Tổng thu:"));
+        textField_TotalIncome = new JTextField(12); textField_TotalIncome.setEditable(false);
+        panelBottom.add(textField_TotalIncome);
+        panelBottom.add(new JLabel("Tổng chi:"));
+        textField_TotalExpense = new JTextField(12); textField_TotalExpense.setEditable(false);
+        panelBottom.add(textField_TotalExpense);
+        contentPane.add(panelBottom, BorderLayout.SOUTH);
 
-		JLabel label_Year = new JLabel("Năm:");
-		label_Year.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        addEvents();
+        loadData();
+    }
 
-		GridBagConstraints gbc_label_Year = new GridBagConstraints();
-		gbc_label_Year.insets = new Insets(0, 0, 5, 5);
-		gbc_label_Year.gridx = 0;
-		gbc_label_Year.gridy = 0;
-		contentPane.add(label_Year, gbc_label_Year);
+    private void addEvents() {
+        button_Load.addActionListener(e -> loadData());
+        button_Exit.addActionListener(e -> {
+            CardLayout cl = (CardLayout) mainChildForm.getLayout();
+            cl.previous(mainChildForm);
+            mainChildForm.revalidate(); mainChildForm.repaint();
+        });
+    }
 
-		textField_Year = new JTextField();
-		textField_Year.setText(String.valueOf(LocalDate.now().getYear()));
+    private void loadData() {
+        model.setRowCount(0);
+        String yearText = textField_Year.getText().trim();
+        if (yearText.isEmpty()) { JOptionPane.showMessageDialog(this, "Vui lòng nhập năm."); return; }
 
-		GridBagConstraints gbc_textField_Year = new GridBagConstraints();
-		gbc_textField_Year.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_Year.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_Year.gridx = 1;
-		gbc_textField_Year.gridy = 0;
-		contentPane.add(textField_Year, gbc_textField_Year);
+        int year;
+        try { year = Integer.parseInt(yearText); }
+        catch (NumberFormatException e) { JOptionPane.showMessageDialog(this, "Năm không hợp lệ."); return; }
 
-		button_Load = new JButton("Xem");
-		button_Load.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        List<Transaction> list = transactionDAO.getTransactionsByYear(userId, year);
+        BigDecimal totalIncome = BigDecimal.ZERO, totalExpense = BigDecimal.ZERO;
 
-		GridBagConstraints gbc_button_Load = new GridBagConstraints();
-		gbc_button_Load.insets = new Insets(0, 0, 5, 5);
-		gbc_button_Load.gridx = 2;
-		gbc_button_Load.gridy = 0;
-		contentPane.add(button_Load, gbc_button_Load);
+        for (Transaction t : list) {
+            // FIX: getDisplayName() → "Thu" / "Chi"
+            String typeStr = t.getType().getDisplayName();
+            model.addRow(new Object[]{
+                    t.getTransactionId(),
+                    t.getWalletName(),
+                    t.getCategoryName(),
+                    typeStr,
+                    VND.format(t.getAmount()) + " đ",
+                    t.getNote() != null ? t.getNote() : "",
+                    t.getTransactionDate() != null ? t.getTransactionDate().format(FMT) : ""
+            });
+            if (t.getType() == Transaction.TransactionType.INCOME)
+                totalIncome = totalIncome.add(t.getAmount());
+            else
+                totalExpense = totalExpense.add(t.getAmount());
+        }
 
-		model_YearlyStatistics = new DefaultTableModel(
-				new Object[][]{},
-				new String[]{
-						"ID", "Ví", "Số tiền", "Danh mục", "Loại", "Ghi chú", "Ngày"
-				}
-		) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-
-		table_YearlyStatistics = new JTable(model_YearlyStatistics);
-
-		JScrollPane scrollPane_Statistics = new JScrollPane(table_YearlyStatistics);
-
-		GridBagConstraints gbc_scrollPane_Statistics = new GridBagConstraints();
-		gbc_scrollPane_Statistics.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane_Statistics.gridwidth = 6;
-		gbc_scrollPane_Statistics.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_Statistics.gridx = 0;
-		gbc_scrollPane_Statistics.gridy = 1;
-		contentPane.add(scrollPane_Statistics, gbc_scrollPane_Statistics);
-
-		JLabel label_Total = new JLabel("Tổng chi:");
-		label_Total.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		GridBagConstraints gbc_label_Total = new GridBagConstraints();
-		gbc_label_Total.insets = new Insets(0, 0, 0, 5);
-		gbc_label_Total.gridx = 0;
-		gbc_label_Total.gridy = 2;
-		contentPane.add(label_Total, gbc_label_Total);
-
-		textField_Total = new JTextField();
-		textField_Total.setEditable(false);
-
-		GridBagConstraints gbc_textField_Total = new GridBagConstraints();
-		gbc_textField_Total.insets = new Insets(0, 0, 0, 5);
-		gbc_textField_Total.gridwidth = 3;
-		gbc_textField_Total.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_Total.gridx = 1;
-		gbc_textField_Total.gridy = 2;
-		contentPane.add(textField_Total, gbc_textField_Total);
-
-		button_Exit = new JButton("Thoát");
-		button_Exit.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		GridBagConstraints gbc_button_Exit = new GridBagConstraints();
-		gbc_button_Exit.gridx = 5;
-		gbc_button_Exit.gridy = 2;
-		contentPane.add(button_Exit, gbc_button_Exit);
-
-		addEvents();
-		loadData();
-	}
-
-	private void addEvents() {
-		button_Load.addActionListener(e -> loadData());
-
-		button_Exit.addActionListener(e -> {
-			CardLayout cl = (CardLayout) mainChildForm.getLayout();
-			cl.previous(mainChildForm);
-
-			mainChildForm.revalidate();
-			mainChildForm.repaint();
-		});
-	}
-
-	private void loadData() {
-		model_YearlyStatistics.setRowCount(0);
-
-		String yearText = textField_Year.getText().trim();
-
-		if (yearText.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Vui lòng nhập năm.");
-			return;
-		}
-
-		int year;
-
-		try {
-			year = Integer.parseInt(yearText);
-		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(this, "Năm không hợp lệ.");
-			return;
-		}
-
-		List<Transaction> list = transactionDAO.getTransactionsByYear(userId, year);
-
-		BigDecimal totalExpense = BigDecimal.ZERO;
-
-		for (Transaction t : list) {
-			model_YearlyStatistics.addRow(new Object[]{
-					t.getTransactionId(),
-					t.getWalletName(),
-					t.getAmount(),
-					t.getCategoryName(),
-					t.getType(),
-					t.getNote(),
-					t.getTransactionDate()
-			});
-
-			if (t.getType() == Transaction.TransactionType.EXPENSE) {
-				totalExpense = totalExpense.add(t.getAmount());
-			}
-		}
-
-		textField_Total.setText(totalExpense.toString());
-	}
+        textField_TotalIncome.setText(VND.format(totalIncome) + " đ");
+        textField_TotalExpense.setText(VND.format(totalExpense) + " đ");
+    }
 }
